@@ -1,0 +1,275 @@
+:root {
+    /* Base Theme */
+    --bg-primary: #0a0b0e;
+    --bg-secondary: #13151a;
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+    --card-bg: #1a1d24;
+    --border-radius: 12px;
+
+    /* DISCOVER Theme */
+    --discover-primary: #6e00ff;
+    --discover-secondary: #00e5ff;
+    --discover-accent: #ff00e5;
+
+    /* SPACE Theme */
+    --space-primary: #00ff9d;
+    --space-secondary: #4d908e;
+    --space-accent: #277da1;
+
+    /* FLOW Theme */
+    --flow-primary: #ff6b6b;
+    --flow-secondary: #ffd93d;
+    --flow-accent: #ff8600;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.dashboard-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr 300px;
+    height: 100vh;
+    gap: 20px;
+    padding: 20px;
+    margin-top: 60px;
+}
+
+.visionsync-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 15px;
+    background: var(--bg-secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+}
+
+.visionsync-logo {
+    background: linear-gradient(
+        45deg,
+        var(--discover-primary),
+        var(--space-primary),
+        var(--flow-primary)
+    );
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.theme-switcher {
+    display: flex;
+    gap: 10px;
+}
+
+.theme-button {
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    border: none;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.side-panel {
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+}
+
+.space-content {
+    display: grid;
+    gap: 20px;
+    grid-template-rows: auto 1fr auto;
+}
+
+.space-section {
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    padding: 20px;
+}
+
+.space-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.space-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 350px;
+    padding: 15px;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateX(120%);
+    animation: slideIn 0.3s forwards;
+}
+
+.notification.info {
+    border-left: 4px solid var(--primary-color);
+}
+
+.notification.error {
+    border-left: 4px solid var(--error-color);
+}
+
+.notification.success {
+    border-left: 4px solid var(--success-color);
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0 5px;
+    font-size: 1.2rem;
+}
+
+.notification-close:hover {
+    color: var(--text-primary);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(120%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+.cognitive-indicator {
+    height: 4px;
+    background: linear-gradient(to right, 
+        var(--primary-color) var(--cognitive-level, 0%), 
+        var(--border-color) var(--cognitive-level, 0%)
+    );
+    border-radius: 2px;
+    margin: 10px 0;
+    transition: all 0.3s ease;
+}
+
+.metric-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.metric-item:last-child {
+    border-bottom: none;
+}
+
+.metric-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.metric-value {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.space-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.space-card canvas {
+    height: 200px;
+    width: 100%;
+}
+
+.brain-wave-indicator {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    background: var(--primary-color);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(74, 144, 226, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(74, 144, 226, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(74, 144, 226, 0);
+    }
+}
+
+.cognitive-state {
+    position: fixed;
+    bottom: 30px;
+    left: 80px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Theme-specific styles */
+body.discover {
+    --primary-color: #4A90E2;
+}
+
+body.space {
+    --primary-color: #2ECC71;
+}
+
+body.flow {
+    --primary-color: #9B59B6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .notification {
+        max-width: calc(100% - 40px);
+    }
+    
+    .brain-wave-indicator {
+        bottom: 10px;
+        left: 10px;
+    }
+    
+    .cognitive-state {
+        bottom: 20px;
+        left: 70px;
+    }
+}

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VisionSync Dashboard</title>
+    <link rel="stylesheet" href="/static/css/visionsync-dashboard.css">
+    <link rel="stylesheet" href="/static/css/visionsync-cognitive.css">
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/js/visionsync-dashboard.js"></script>
+</head>
+<body class="discover">
+    <nav class="visionsync-nav">
+        <div class="visionsync-logo" onclick="window.location.href='/'">
+            VisionSync
+        </div>
+        <div class="theme-switcher">
+            <button class="theme-button discover">Discover Mode</button>
+            <button class="theme-button space">Space Mode</button>
+            <button class="theme-button flow">Flow Mode</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <!-- DISCOVER Panel -->
+        <div class="side-panel discover">
+            <h2>DISCOVER</h2>
+            <div class="cognitive-indicator discover"></div>
+            <div id="discover-metrics"></div>
+        </div>
+
+        <!-- SPACE Content -->
+        <div class="space-content">
+            <div class="space-section">
+                <h2>SPACE</h2>
+                <div class="cognitive-indicator space"></div>
+                <div class="space-grid">
+                    <div class="space-card" data-section="scope">
+                        <h3>Scope</h3>
+                        <div id="scope-metrics"></div>
+                    </div>
+                    <div class="space-card" data-section="plan">
+                        <h3>Plan</h3>
+                        <div id="plan-metrics"></div>
+                    </div>
+                    <div class="space-card" data-section="analyze">
+                        <h3>Analyze</h3>
+                        <div id="analyze-metrics"></div>
+                    </div>
+                    <div class="space-card" data-section="create">
+                        <h3>Create</h3>
+                        <div id="create-metrics"></div>
+                    </div>
+                    <div class="space-card" data-section="execute">
+                        <h3>Execute</h3>
+                        <div id="execute-metrics"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Tabs -->
+            <div class="space-section">
+                <div class="content-tabs">
+                    <div class="tab active">Videos</div>
+                    <div class="tab">Files</div>
+                    <div class="tab">Notifications</div>
+                </div>
+                
+                <!-- Content Views -->
+                <div class="content-view">
+                    <div class="video-container">
+                        <!-- Video player placeholder -->
+                        <div style="padding: 20px; text-align: center;">Video Content</div>
+                    </div>
+                </div>
+
+                <div class="content-view" style="display: none;">
+                    <div class="file-item">
+                        <span>📄</span>
+                        <div>
+                            <div>Project Documentation</div>
+                            <div style="color: var(--text-secondary)">Updated recently</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-view" style="display: none;">
+                    <div class="notification">
+                        <div>System Update</div>
+                        <div style="color: var(--text-secondary)">Latest changes applied</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FLOW Panel -->
+        <div class="side-panel flow">
+            <h2>FLOW</h2>
+            <div class="cognitive-indicator flow"></div>
+            <div id="flow-metrics"></div>
+        </div>
+    </div>
+
+    <!-- Cognitive Enhancement Elements -->
+    <div class="cognitive-mode"></div>
+    <div class="focus-zone"></div>
+    <div class="brain-wave-indicator"></div>
+    <div class="cognitive-state">Current State: Initializing...</div>
+
+    <script>
+        // Error handling and notification system
+        class NotificationSystem {
+            static show(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.innerHTML = `
+                    <div class="notification-content">
+                        <span class="notification-message">${message}</span>
+                        <button class="notification-close">&times;</button>
+                    </div>
+                `;
+                document.body.appendChild(notification);
+                
+                notification.querySelector('.notification-close').onclick = () => {
+                    notification.remove();
+                };
+                
+                setTimeout(() => notification.remove(), 5000);
+            }
+        }
+
+        // Real-time metrics handling
+        class MetricsManager {
+            constructor() {
+                this.socket = io();
+                this.charts = {};
+                this.initializeWebSocket();
+            }
+
+            initializeWebSocket() {
+                this.socket.on('metrics_update', (data) => {
+                    this.updateMetrics(data);
+                });
+
+                this.socket.on('error', (error) => {
+                    NotificationSystem.show(error.message, 'error');
+                });
+            }
+
+            updateMetrics(data) {
+                // Update Discover metrics
+                if (data.discover) {
+                    this.updateDiscoverMetrics(data.discover);
+                }
+
+                // Update Space metrics
+                if (data.space) {
+                    Object.entries(data.space).forEach(([section, metrics]) => {
+                        this.updateSpaceMetrics(section, metrics);
+                    });
+                }
+
+                // Update cognitive indicators
+                if (data.cognitive) {
+                    this.updateCognitiveIndicators(data.cognitive);
+                }
+            }
+
+            updateDiscoverMetrics(metrics) {
+                const container = document.getElementById('discover-metrics');
+                container.innerHTML = `
+                    <div class="metric-item">
+                        <span class="metric-label">Processing Rate</span>
+                        <span class="metric-value">${metrics.processingRate}/s</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Accuracy</span>
+                        <span class="metric-value">${metrics.accuracy}%</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Active Tasks</span>
+                        <span class="metric-value">${metrics.activeTasks}</span>
+                    </div>
+                `;
+            }
+
+            updateSpaceMetrics(section, metrics) {
+                const container = document.getElementById(`${section}-metrics`);
+                if (!container) return;
+
+                if (!this.charts[section]) {
+                    this.charts[section] = this.createChart(container, section);
+                }
+
+                this.charts[section].data.datasets[0].data = metrics.data;
+                this.charts[section].data.labels = metrics.labels;
+                this.charts[section].update();
+            }
+
+            createChart(container, section) {
+                const canvas = document.createElement('canvas');
+                container.appendChild(canvas);
+
+                return new Chart(canvas, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: `${section.charAt(0).toUpperCase() + section.slice(1)} Metrics`,
+                            data: [],
+                            borderColor: this.getChartColor(section),
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            getChartColor(section) {
+                const colors = {
+                    scope: '#4A90E2',
+                    plan: '#2ECC71',
+                    analyze: '#F1C40F',
+                    create: '#E74C3C',
+                    execute: '#9B59B6'
+                };
+                return colors[section] || '#4A90E2';
+            }
+
+            updateCognitiveIndicators(data) {
+                const indicators = document.querySelectorAll('.cognitive-indicator');
+                indicators.forEach(indicator => {
+                    const type = indicator.classList.contains('discover') ? 'discover' : 'space';
+                    const level = data[type] || 0;
+                    indicator.style.setProperty('--cognitive-level', `${level}%`);
+                });
+            }
+        }
+
+        // Initialize systems when document is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            const metricsManager = new MetricsManager();
+            
+            // Theme switching
+            document.querySelectorAll('.theme-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const theme = button.textContent.toLowerCase().split(' ')[0];
+                    document.body.className = theme;
+                    NotificationSystem.show(`Switched to ${button.textContent}`, 'info');
+                });
+            });
+
+            // Error handling for card interactions
+            document.querySelectorAll('.space-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    try {
+                        const section = card.dataset.section;
+                        // Handle card interaction
+                    } catch (error) {
+                        NotificationSystem.show(`Error in ${card.querySelector('h3').textContent}: ${error.message}`, 'error');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+.cognitive-mode {
+    position: fixed;
+    right: 20px;
+    top: 80px;
+    background: var(--bg-secondary);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    z-index: 1000;
+}
+
+.cognitive-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    animation: pulse 4s infinite;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.space-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.05), 
+        transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s;
+}
+
+.space-card:hover::before {
+    transform: translateX(100%);
+}
+
+.thought-bubble {
+    position: absolute;
+    padding: 10px;
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    font-size: 0.9em;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.focus-zone {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 2px solid var(--theme-primary);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.brain-wave-indicator {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 2px;
+    width: 200px;
+    background: var(--theme-primary);
+    opacity: 0.5;
+}
+
+.interaction-ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    background: var(--theme-primary);
+}
+
+.cognitive-state {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    padding: 10px;
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    font-size: 0.8em;
+    opacity: 0.8;
+}
+
+.mind-map-connector {
+    position: absolute;
+    background: var(--theme-primary);
+    height: 2px;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.cognitive-indicator {
+    height: 3px;
+    border-radius: 1.5px;
+    margin: 8px 0;
+}
+
+.cognitive-indicator.discover {
+    background: linear-gradient(90deg,
+        var(--discover-primary),
+        var(--discover-secondary),
+        var(--discover-accent)
+    );
+    animation: flowAnimation 2s infinite linear;
+}
+
+.cognitive-indicator.space {
+    background: linear-gradient(90deg,
+        var(--space-primary),
+        var(--space-secondary),
+        var(--space-accent)
+    );
+    animation: flowAnimation 3s infinite linear;
+}
+
+.cognitive-indicator.flow {
+    background: linear-gradient(90deg,
+        var(--flow-primary),
+        var(--flow-secondary),
+        var(--flow-accent)
+    );
+    animation: flowAnimation 1.5s infinite linear;
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.1); opacity: 0.1; }
+    100% { transform: scale(1); opacity: 0.3; }
+}
+
+@keyframes flowAnimation {
+    0% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}

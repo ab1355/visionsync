@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisionSync - Agent Zero</title>
+    <link rel="stylesheet" href="/static/css/visionsync.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="logo-container">
+                <img src="/static/images/logo.png" alt="VisionSync Logo" class="logo">
+                <h1>VisionSync</h1>
+            </div>
+            <div class="nav-items">
+                <a href="#" class="nav-item active" data-view="dashboard">
+                    <i class="fas fa-home"></i>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-item" data-view="processing">
+                    <i class="fas fa-cogs"></i>
+                    Processing
+                </a>
+                <a href="#" class="nav-item" data-view="analysis">
+                    <i class="fas fa-chart-bar"></i>
+                    Analysis
+                </a>
+                <a href="#" class="nav-item" data-view="settings">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-container">
+                    <input type="text" placeholder="Search..." class="search-input">
+                </div>
+                <div class="user-menu">
+                    <span class="user-name">John Doe</span>
+                    <img src="/static/images/avatar.png" alt="User Avatar" class="user-avatar">
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div id="dashboard-view" class="view active">
+                    <div class="dashboard-grid">
+                        <div class="card stats-card">
+                            <h3>Processing Statistics</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <span class="stat-value">245</span>
+                                    <span class="stat-label">Images Processed</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">98%</span>
+                                    <span class="stat-label">Accuracy</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">1.2s</span>
+                                    <span class="stat-label">Avg. Process Time</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card recent-activity">
+                            <h3>Recent Activity</h3>
+                            <div class="activity-list">
+                                <!-- Activity items will be dynamically populated -->
+                            </div>
+                        </div>
+
+                        <div class="card performance-chart">
+                            <h3>Performance Metrics</h3>
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="processing-view" class="view">
+                    <div class="processing-container">
+                        <div class="upload-area">
+                            <div class="dropzone" id="upload-dropzone">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Drag and drop files here or click to upload</p>
+                                <input type="file" multiple accept="image/*" class="file-input">
+                            </div>
+                        </div>
+                        <div class="processing-queue">
+                            <h3>Processing Queue</h3>
+                            <div class="queue-list">
+                                <!-- Queue items will be dynamically populated -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="analysis-view" class="view">
+                    <div class="analysis-grid">
+                        <div class="card analysis-filters">
+                            <h3>Analysis Filters</h3>
+                            <div class="filter-controls">
+                                <!-- Filter controls will be added here -->
+                            </div>
+                        </div>
+                        <div class="card analysis-results">
+                            <h3>Analysis Results</h3>
+                            <div class="results-container">
+                                <!-- Results will be dynamically populated -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="settings-view" class="view">
+                    <div class="settings-container">
+                        <div class="card settings-section">
+                            <h3>General Settings</h3>
+                            <form id="settings-form">
+                                <!-- Settings form fields will be added here -->
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/js/visionsync.js"></script>
+</body>
+</html>

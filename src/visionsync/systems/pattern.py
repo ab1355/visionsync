@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Pattern recognition system for Agent Zero.
+Pattern recognition system for VisionSync.
 
 This system identifies and learns from patterns in agent interactions,
 helping to improve response quality and efficiency over time.
@@ -11,10 +11,9 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 import numpy as np
-from sentence_transformers import SentenceTransformer
 
-from core.logging import Log
-from systems.base import PatternSystem
+from ..core.logging import Log
+from ..systems.base import PatternSystem
 
 class Pattern:
     """Represents a detected interaction pattern."""
@@ -23,12 +22,10 @@ class Pattern:
         self,
         pattern_type: str,
         examples: List[str],
-        embedding: np.ndarray,
         metadata: Optional[Dict[str, Any]] = None
     ):
         self.pattern_type = pattern_type
         self.examples = examples
-        self.embedding = embedding
         self.metadata = metadata or {}
         self.created_at = datetime.now()
         self.last_used = self.created_at
@@ -39,7 +36,6 @@ class Pattern:
         return {
             "type": self.pattern_type,
             "examples": self.examples,
-            "embedding": self.embedding.tolist(),
             "metadata": self.metadata,
             "created_at": self.created_at.isoformat(),
             "last_used": self.last_used.isoformat(),
@@ -52,7 +48,6 @@ class Pattern:
         pattern = cls(
             pattern_type=data["type"],
             examples=data["examples"],
-            embedding=np.array(data["embedding"]),
             metadata=data["metadata"]
         )
         pattern.created_at = datetime.fromisoformat(data["created_at"])
@@ -65,8 +60,7 @@ class PatternEngine(PatternSystem):
     Implementation of pattern recognition system.
     
     Features:
-    - Semantic pattern detection using embeddings
-    - Pattern learning and adaptation
+    - Pattern detection and learning
     - Pattern application to new contexts
     """
     
@@ -75,12 +69,8 @@ class PatternEngine(PatternSystem):
         super().__init__(config)
         self.log = Log(name="pattern-engine")
         
-        # Load embedding model
-        self.model = SentenceTransformer('all-MiniLM-L6-v2')
-        
         # Pattern storage
         self.patterns: Dict[str, Pattern] = {}
-        self.pattern_embeddings: Dict[str, np.ndarray] = {}
         
         # Configuration
         self.similarity_threshold = config.get('similarity_threshold', 0.75)
@@ -188,23 +178,17 @@ class PatternEngine(PatternSystem):
         if not text:
             return {}
             
-        # Generate embedding
-        embedding = self.model.encode(text)
-        
-        # Find similar patterns
-        similar_patterns = self._find_similar_patterns(embedding)
-        
         # Group by pattern type
         patterns_by_type = {}
-        for pattern_id, similarity in similar_patterns:
-            pattern = self.patterns[pattern_id]
-            if pattern.pattern_type not in patterns_by_type:
-                patterns_by_type[pattern.pattern_type] = []
-            patterns_by_type[pattern.pattern_type].append({
-                'id': pattern_id,
-                'similarity': similarity,
-                'pattern': pattern.to_dict()
-            })
+        for pattern_id, pattern in self.patterns.items():
+            if any(example in text for example in pattern.examples):
+                if pattern.pattern_type not in patterns_by_type:
+                    patterns_by_type[pattern.pattern_type] = []
+                patterns_by_type[pattern.pattern_type].append({
+                    'id': pattern_id,
+                    'similarity': 1.0,  # Simplified similarity
+                    'pattern': pattern.to_dict()
+                })
             
         return patterns_by_type
 
@@ -232,13 +216,6 @@ class PatternEngine(PatternSystem):
             for match in pattern_matches:
                 pattern = Pattern.from_dict(match['pattern'])
                 
-                # Apply pattern transformation
-                enhanced_text = self._apply_pattern_transform(
-                    enhanced_text,
-                    pattern,
-                    match['similarity']
-                )
-                
                 # Track pattern usage
                 pattern.use_count += 1
                 pattern.last_used = datetime.now()
@@ -248,49 +225,6 @@ class PatternEngine(PatternSystem):
             'text': enhanced_text,
             'applied_patterns': applied_patterns
         }
-
-    def _find_similar_patterns(
-        self,
-        embedding: np.ndarray,
-        threshold: Optional[float] = None
-    ) -> List[Tuple[str, float]]:
-        """Find patterns similar to input embedding."""
-        if not self.patterns:
-            return []
-            
-        threshold = threshold or self.similarity_threshold
-        similar = []
-        
-        # Calculate similarities
-        for pattern_id, pattern_embedding in self.pattern_embeddings.items():
-            similarity = self._calculate_similarity(embedding, pattern_embedding)
-            if similarity >= threshold:
-                similar.append((pattern_id, similarity))
-                
-        # Sort by similarity
-        similar.sort(key=lambda x: x[1], reverse=True)
-        
-        return similar
-
-    def _calculate_similarity(
-        self,
-        embedding1: np.ndarray,
-        embedding2: np.ndarray
-    ) -> float:
-        """Calculate cosine similarity between embeddings."""
-        return float(np.dot(embedding1, embedding2) / 
-                    (np.linalg.norm(embedding1) * np.linalg.norm(embedding2)))
-
-    def _apply_pattern_transform(
-        self,
-        text: str,
-        pattern: Pattern,
-        similarity: float
-    ) -> str:
-        """Apply pattern transformation to text."""
-        # This is a simplified implementation
-        # Real implementation would use more sophisticated transformation logic
-        return text
 
     def _analyze_pattern_types(
         self,

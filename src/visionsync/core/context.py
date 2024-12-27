@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Context management for Agent Zero.
+Context management for VisionSync.
 
 This module handles agent context and maintains the context hierarchy.
 """
@@ -9,8 +9,8 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, Optional
 import uuid
 
-from core.config import AgentConfig
-from core.logging import Log
+from ..core.config import AgentConfig
+from ..core.logging import Log
 
 @dataclass
 class AgentContext:

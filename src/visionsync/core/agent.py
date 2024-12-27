@@ -7,15 +7,15 @@ import asyncio
 import uuid
 from typing import Any, List, Optional
 
-from core.context import AgentContext
-from core.config import AgentConfig
-from systems.interface import InterfaceEngine
-from systems.pattern import PatternEngine
-from systems.resource import ResourceManager
-from systems.learning import LearningEngine
-from systems.cooperation import CoordinationEngine
-from systems.evolution import EvolutionEngine
-from systems.analytics import AnalyticsEngine
+from ..core.context import AgentContext
+from ..core.config import AgentConfig
+from ..systems.base import InterfaceSystem
+from ..systems.pattern import PatternEngine
+from ..systems.base import ResourceSystem as ResourceManager
+from ..systems.base import LearningSystem as LearningEngine
+from ..systems.base import CooperationSystem as CoordinationEngine
+from ..systems.base import EvolutionSystem as EvolutionEngine
+from ..systems.base import AnalyticsSystem as AnalyticsEngine
 
 class Agent:
     """
@@ -48,7 +48,7 @@ class Agent:
         self.cooperation_engine = CoordinationEngine(self.config.multi_agent_cooperation)
         self.evolution_engine = EvolutionEngine(self.config.system_evolution)
         self.analytics_engine = AnalyticsEngine(self.config.analytics_system)
-        self.interface_engine = InterfaceEngine(self.config.interface_system)
+        self.interface_engine = InterfaceSystem(self.config.interface_system)
         
         # State management
         self.history: List[Any] = []

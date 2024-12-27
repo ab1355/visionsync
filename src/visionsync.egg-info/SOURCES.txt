@@ -1,6 +1,7 @@
 LICENSE
 README.md
 pyproject.toml
+src/visionsync/__init__.py
 src/visionsync.egg-info/PKG-INFO
 src/visionsync.egg-info/SOURCES.txt
 src/visionsync.egg-info/dependency_links.txt
